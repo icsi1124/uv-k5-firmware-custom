@@ -61,6 +61,30 @@
 #include "ui/lock.h"
 #include "ui/welcome.h"
 #include "ui/menu.h"
+
+static void WaitForKeysReleased(void)
+{
+    int released = 0;
+
+    while (released < 50)
+    {
+        if (GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) &&
+            KEYBOARD_Poll() == KEY_INVALID)
+        {
+            released++;
+        }
+        else
+        {
+            released = 0;
+        }
+
+        SYSTEM_DelayMs(10);
+    }
+
+    gKeyReading0 = KEY_INVALID;
+    gKeyReading1 = KEY_INVALID;
+    gDebounceCounter = 0;
+}
 void _putchar(__attribute__((unused)) char c)
 {
 
@@ -197,15 +221,7 @@ void Main(void)
         UI_DisplayReleaseKeys();
         BACKLIGHT_TurnOn();
 
-        // 500ms
-        for (int i = 0; i < 50;)
-        {
-            i = (GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) && KEYBOARD_Poll() == KEY_INVALID) ? i + 1 : 0;
-            SYSTEM_DelayMs(10);
-        }
-        gKeyReading0 = KEY_INVALID;
-        gKeyReading1 = KEY_INVALID;
-        gDebounceCounter = 0;
+        WaitForKeysReleased();
     }
 
     if (!gChargingWithTypeC && gBatteryDisplayLevel == 0)
@@ -249,15 +265,7 @@ void Main(void)
             UI_DisplayLock();
             bIsInLockScreen = false;
 
-            // 500ms
-            for (int i = 0; i < 50;)
-            {
-                i = (GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) && KEYBOARD_Poll() == KEY_INVALID) ? i + 1 : 0;
-                SYSTEM_DelayMs(10);
-            }
-            gKeyReading0 = KEY_INVALID;
-            gKeyReading1 = KEY_INVALID;
-            gDebounceCounter = 0;
+            WaitForKeysReleased();
         }
 #endif
 
