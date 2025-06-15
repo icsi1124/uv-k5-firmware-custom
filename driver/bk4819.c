@@ -1230,44 +1230,44 @@ void BK4819_EnableTXLink(void)
 void BK4819_PlayDTMF(char Code)
 {
 
-    struct DTMF_RegPair {
+    struct DTMF_TonePair {
         uint16_t tone1;
         uint16_t tone2;
     };
 
-    // Pre-computed register values for the standard DTMF tone set
-    static const struct DTMF_RegPair tone_regs[] = {
-        {9715, 13793},
-        {7196, 12482},
-        {7196, 13793},
-        {7196, 15249},
-        {7950, 12482},
-        {7950, 13793},
-        {7950, 15249},
-        {8796, 12482},
-        {8796, 13793},
-        {8796, 15249},
-        {7196, 16860},
-        {7950, 16860},
-        {8796, 16860},
-        {9715, 16860},
-        {9715, 12482},
-        {9715, 15249},
+    const struct DTMF_TonePair tones[] = {
+        {941, 1336},
+        {697, 1209},
+        {697, 1336},
+        {697, 1477},
+        {770, 1209},
+        {770, 1336},
+        {770, 1477},
+        {852, 1209},
+        {852, 1336},
+        {852, 1477},
+        {697, 1633},
+        {770, 1633},
+        {852, 1633},
+        {941, 1633},
+        {941, 1209},
+        {941, 1477},
     };
 
-    int index = -1;
+
+    const struct DTMF_TonePair *pSelectedTone = NULL;
     switch (Code)
     {
-        case '0'...'9': index = 0  + Code - '0'; break;
-        case 'A'...'D': index = 10 + Code - 'A'; break;
-        case '*':       index = 14; break;
-        case '#':       index = 15; break;
-        default:        index = -1;
+        case '0'...'9': pSelectedTone = &tones[0  + Code - '0']; break;
+        case 'A'...'D': pSelectedTone = &tones[10 + Code - 'A']; break;
+        case '*': pSelectedTone = &tones[14]; break;
+        case '#': pSelectedTone = &tones[15]; break;
+        default: pSelectedTone = NULL;
     }
 
-    if (index >= 0) {
-        BK4819_WriteRegister(BK4819_REG_71, tone_regs[index].tone1);
-        BK4819_WriteRegister(BK4819_REG_72, tone_regs[index].tone2);
+    if (pSelectedTone) {
+        BK4819_WriteRegister(BK4819_REG_71, (((uint32_t)pSelectedTone->tone1 * 103244) + 5000) / 10000);   // with rounding
+        BK4819_WriteRegister(BK4819_REG_72, (((uint32_t)pSelectedTone->tone2 * 103244) + 5000) / 10000);   // with rounding
     }
 }
 
