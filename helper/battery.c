@@ -45,12 +45,12 @@ typedef enum {
     BATTERY_LOW_CONFIRMED
 } BatteryLow_t;
 
-uint16_t          lowBatteryCountdown;
-const uint16_t    lowBatteryPeriod = 30;
+static uint16_t          lowBatteryCountdown;
+static const uint16_t    lowBatteryPeriod = 30;
 
 volatile uint16_t gPowerSave_10ms;
 
-const uint16_t Voltage2PercentageTable[][7][3] = {
+static const uint16_t Voltage2PercentageTable[][7][3] = {
     [BATTERY_TYPE_1600_MAH] = {
         {828, 100},
         {814, 97 },

@@ -37,6 +37,12 @@ extern FUNCTION_Type_t       gCurrentFunction;
 
 void FUNCTION_Init(void);
 void FUNCTION_Select(FUNCTION_Type_t Function);
-bool FUNCTION_IsRx();
+
+static inline bool FUNCTION_IsRx(void)
+{
+    return gCurrentFunction == FUNCTION_MONITOR ||
+           gCurrentFunction == FUNCTION_INCOMING ||
+           gCurrentFunction == FUNCTION_RECEIVE;
+}
 
 #endif

@@ -42,13 +42,6 @@
 
 FUNCTION_Type_t gCurrentFunction;
 
-bool FUNCTION_IsRx()
-{
-    return gCurrentFunction == FUNCTION_MONITOR ||
-           gCurrentFunction == FUNCTION_INCOMING ||
-           gCurrentFunction == FUNCTION_RECEIVE;
-}
-
 void FUNCTION_Init(void)
 {
     g_CxCSS_TAIL_Found = false;
