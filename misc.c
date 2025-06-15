@@ -336,11 +336,15 @@ int32_t NUMBER_AddWithWraparound(int32_t Base, int32_t Add, int32_t LowerLimit, 
 unsigned long StrToUL(const char * str)
 {
     unsigned long ul = 0;
-    for(uint8_t i = 0; i < strlen(str); i++){
-        char c = str[i];
-        if(c < '0' || c > '9')
+    if (str == NULL)
+        return 0;
+
+    for (const char *p = str; *p; ++p) {
+        char c = *p;
+        if (c < '0' || c > '9')
             break;
-        ul = ul * 10 + (uint8_t)(c-'0');
+        ul = ul * 10 + (uint8_t)(c - '0');
     }
+
     return ul;
 }
